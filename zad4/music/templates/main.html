@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music</title>
+
+    {%load static%}
+    <link rel="stylesheet" href="{%static "music/main.css"%}"/>
+</head>
+<body>
+    <h1>Music!</h1>
+    <p>This website is about music. Check below to see music!</p>
+
+    <button name="buttonLoadData">Load Data</button>
+    <ul name="dataList">
+        
+    </ul>
+    <label name="komunikat">Załaduj dane przyciskiem.</label>
+
+    <script>
+        const label = document.querySelector("label[name='komunikat']");
+
+        const loadButton = document.querySelector('button[name="buttonLoadData"]');
+        const dataList = document.querySelector('ul[name="dataList"]');
+
+        loadButton.addEventListener('click', async () => {
+            try {
+                label.textContent = "Ładowanie danych...";
+                const response = await fetch("/api/music/");
+
+                if (!response.ok) {
+                    label.textContent = "Pojawil sie blad przy ladowaniu danych.";
+                    throw new Error("Byl blad w fetchowaniu danych");
+                }
+
+                const data = await response.json();
+
+                dataList.innerHTML = "";
+
+                if (data.length==0) {
+                    label.textContent = "Brak danych w bazie!";
+                    return;
+                }
+
+                data.forEach(item => {
+                    const li = document.createElement("li");
+                    li.innerHTML =`${item.id}, "${item.title}" <ul><li>Title: ${item.title}</li><li>Album: ${item.album}</li><li>Artist: ${item.artist}</li><li>Plays: ${item.plays}</li><li>Release Date: ${item.released}</li></ul>`;
+
+                    dataList.appendChild(li);
+                });
+
+                label.textContent = "Zaladowano dane z bazy danych, dodano do listy.";
+            } catch(error) {
+                console.error("Nie udano sie zaladowac danych: ", error);
+                label.textContent = "Pojawil sie blad przy ladowaniu danych. Blad: "+error;
+            }
+            
+
+            
+        });
+
+        
+    </script>
+</body>
+</html>
