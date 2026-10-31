@@ -1,6 +1,15 @@
 
+ul {
+}
+ul > li {
+    padding:10px;
+}
 label {
     background-color:beige;
     border: 1px solid gold;
     padding:10px;
+    width:3000px;
+    height:100%;
+    text-align:center;
+    justify-content:center;
 }
