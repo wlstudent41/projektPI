@@ -12,22 +12,47 @@
     <h1>Music!</h1>
     <p>This website is about music. Check below to see music!</p>
 
-    <button name="buttonLoadData">Load Data</button>
-    <ul name="dataList">
+    <button id="buttonLoadData">Load Data</button>
+    <select id="selectFilter">
+        <option value="artist">Artist</option>
+        <option value="album">Album</option>
+        <option value="title">Title</option>
+    </select>
+    <input id="inputText" type="text" placeholder="Filter text here, leave empty if not desired"></input>
+
+    <label id="komunikat">Załaduj dane przyciskiem.</label>
+
+    <ul id="dataList">
         
     </ul>
-    <label name="komunikat">Załaduj dane przyciskiem.</label>
+    
 
     <script>
-        const label = document.querySelector("label[name='komunikat']");
+        const label = document.getElementById("komunikat");
 
-        const loadButton = document.querySelector('button[name="buttonLoadData"]');
-        const dataList = document.querySelector('ul[name="dataList"]');
+        const loadButton = document.getElementById('buttonLoadData');
+        const dataList = document.getElementById('dataList');
+
+        const selectFilter = document.getElementById('selectFilter');
+        const inputText = document.getElementById('inputText');
+
 
         loadButton.addEventListener('click', async () => {
             try {
                 label.textContent = "Ładowanie danych...";
-                const response = await fetch("/api/music/");
+
+                const selectedFilter = selectFilter.value;
+                const inputFilter = inputText.value;
+
+                let response = "";
+
+                if (inputFilter != "") {
+                    console.log("ladowanie filter i input: " + selectedFilter + " " + inputFilter);
+                    response = await fetch(`/api/music/?${selectedFilter}=${inputFilter}`);
+                } else {
+                    console.log("Ladowanie BEZ");
+                    response = await fetch(`/api/music/`);
+                }
 
                 if (!response.ok) {
                     label.textContent = "Pojawil sie blad przy ladowaniu danych.";
@@ -45,7 +70,8 @@
 
                 data.forEach(item => {
                     const li = document.createElement("li");
-                    li.innerHTML =`${item.id}, "${item.title}" <ul><li>Title: ${item.title}</li><li>Album: ${item.album}</li><li>Artist: ${item.artist}</li><li>Plays: ${item.plays}</li><li>Release Date: ${item.released}</li></ul>`;
+                    //li.innerHTML =`${item.id}, "${item.title}" <ul><li>Title: ${item.title}</li><li>Album: ${item.album}</li><li>Artist: ${item.artist}</li><li>Plays: ${item.plays}</li><li>Release Date: ${item.released}</li></ul>`;
+                    li.innerHTML = `<h2>${item.title}</h2><p>Album: \"${item.album}\" | Artist: ${item.artist} | Released on: ${item.released} | Listens: ${item.plays}</p>`;
 
                     dataList.appendChild(li);
                 });
